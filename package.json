@@ -1,29 +1,38 @@
 {
-  "name": "ts-starter",
+  "name": "koa-mods-demo",
   "version": "1.0.0",
-  "description": "A simple starter project with Typescript.",
+  "description": "A simple starter project built with Typescript using Koa and Koa Mods.",
   "main": "dist/index.js",
   "scripts": {
-    "start": "if-env NODE_ENV=production && npm run start:prod || npm run start:dev",
-    "start:prod": "tsc && node dist/index.js",
-    "start:dev": "nodemon -x ts-node src/index.ts"
+    "dev": "nodemon -x ts-node -r dotenv/config src/index.ts",
+    "start": "tsc && node -r dotenv/config dist/index.js",
+    "test": "cross-env NODE_ENV=test nyc mocha -r dotenv/config --opts test/mocha.opts"
   },
   "author": "Bruce Hem <bruce.hem@pathmazing.com>",
   "license": "MIT",
   "dependencies": {
+    "cross-env": "^5.0.5",
     "dotenv": "^4.0.0",
-    "if-env": "^1.0.0",
+    "jsonwebtoken": "^8.0.1",
     "kcors": "^2.2.1",
     "koa": "^2.3.0",
     "koa-bodyparser": "^4.2.0",
+    "koa-logger": "^3.1.0",
     "koa-mods": "^0.3.0",
-    "koa-router": "^7.2.1"
+    "koa-router": "^7.2.1",
+    "mysql": "^2.14.1",
+    "mysql2": "^1.4.2",
+    "sequelize": "^4.11.4",
+    "sequelize-typescript": "^0.5.0"
   },
   "devDependencies": {
     "@types/dotenv": "^4.0.1",
+    "@types/jsonwebtoken": "^7.2.3",
     "@types/koa": "^2.0.39",
+    "@types/koa-logger": "^2.0.2",
     "@types/koa-router": "^7.0.23",
     "@types/node": "^8.0.31",
+    "@types/sequelize": "^4.0.75",
     "nodemon": "^1.12.1",
     "ts-node": "^3.3.0",
     "tslint": "^5.7.0",

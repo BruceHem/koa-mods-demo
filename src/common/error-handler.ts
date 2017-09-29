@@ -3,14 +3,30 @@ import { Context } from 'koa';
 export function errorHandler() {
   return async (ctx: Context, next: () => Promise<any>) => {
     await next().catch(error => {
-      console.error(error);
+      console.error('Oops, caught an error!', error);
+      error.headers = undefined;
+      ctx.set('X-Message', error.message);
 
-      if (error.name === 'KoaModsValidationError') {
-        ctx.status = 422;
-        ctx.body = error;
-      } else {
-        ctx.status = 500;
-        ctx.body = { message: 'Internal Server Error' };
+      switch (error.name) {
+        case 'BadRequestError':
+          ctx.status = 400;
+          ctx.body = error;
+          break;
+        case 'UnauthorizedError':
+          ctx.status = 401;
+          ctx.body = error;
+          break;
+        case 'KoaModsValidationError':
+          ctx.status = 422;
+          ctx.body = error;
+          break;
+        default: {
+          const name = 'InternalServerError';
+          const message = 'Internal Server Error';
+          ctx.set('X-Message', message);
+          ctx.status = 500;
+          ctx.body = { name, message };
+        }
       }
     });
   };

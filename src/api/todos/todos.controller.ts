@@ -1,9 +1,12 @@
-import { Controller, Delete, Get, Post, Put } from 'koa-mods';
+import { Auth, AuthUser, Controller, Delete, Get, Post, Put } from 'koa-mods';
+
+import User from '../../models/user.model';
 
 @Controller('todos')
 export class TodosController {
   @Post()
-  async createTodo() {
+  @Auth()
+  async createTodo(@AuthUser() authUser: User) {
     return 'Create Todo';
   }
 

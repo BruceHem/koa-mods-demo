@@ -1,34 +1,30 @@
 import 'reflect-metadata';
 
 import * as Koa from 'koa';
+import * as logger from 'koa-logger';
 import { useKoaMods } from 'koa-mods';
 
-import { errorHandler } from './common/error-handler';
-import { TodosController } from './todos/todos.controller';
+import { AuthController } from './api/auth/auth.controller';
+import { TodosController } from './api/todos/todos.controller';
+import { authCheckerFn, errorHandler, roleCheckerFn, sequelize } from './common';
 
 const app = new Koa();
 
-// Error handler
+app.use(logger());
 app.use(errorHandler());
 
 useKoaMods({
   app,
-  controllers: [ TodosController ],
+  controllers: [ AuthController, TodosController ],
   authCheckerFn,
-  roleCheckerFn
+  roleCheckerFn,
+  enableCors: true
 });
 
-app.listen(3030, () => console.log('Server running on port 3030'));
-
-async function authCheckerFn(ctx: Koa.Context): Promise<{ success: boolean; user: any }> {
-  const { username, password } = ctx.headers;
-  if (username === 'bruce' && password === 'easypass') {
-    return { success: true, user: { username, password, role: 'USER' } };
-  } else {
-    return { success: false, user: undefined };
-  }
-}
-
-async function roleCheckerFn(ctx: Koa.Context): Promise<{ availableRoles: string[] }> {
-  return { availableRoles: [ 'ADMIN', 'USER' ] };
-}
+(async () => {
+  await sequelize.sync();
+  app.listen(6969, () => console.log('Server running on port 6969'));
+})().catch(e => {
+  console.error(e);
+  process.exit(1);
+});
